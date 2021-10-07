@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mMRJLYLx1sv8DEn76GmyyjUsbjOVakJ52lc9YUF4Glux15o/NuovQTFPsXVmRYKbeEqL9bSnZelREQPCb69DSA==",
+  "dgSpecHash": "/SY6KoIpaDEHsD04uukLOvHJ+DiKEDYN7oNzjwQzJxbL8eOIO575ehgvK6re23jo9zk3lmYZumuJy4eF2SL0Mw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Administrador\\paralelo\\backendwebapi\\TodoApi\\TodoApi.csproj",
+  "projectFilePath": "C:\\Users\\Administrador\\paralelo\\controle-estoque-back\\TodoApi\\TodoApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Administrador\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Administrador\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

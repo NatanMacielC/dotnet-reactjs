@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Administrador\\paralelo\\backendwebapi\\TodoApi\\TodoApi.csproj": {}
+    "C:\\Users\\Administrador\\paralelo\\controle-estoque-back\\TodoApi\\TodoApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Administrador\\paralelo\\backendwebapi\\TodoApi\\TodoApi.csproj": {
+    "C:\\Users\\Administrador\\paralelo\\controle-estoque-back\\TodoApi\\TodoApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Administrador\\paralelo\\backendwebapi\\TodoApi\\TodoApi.csproj",
+        "projectUniqueName": "C:\\Users\\Administrador\\paralelo\\controle-estoque-back\\TodoApi\\TodoApi.csproj",
         "projectName": "TodoApi",
-        "projectPath": "C:\\Users\\Administrador\\paralelo\\backendwebapi\\TodoApi\\TodoApi.csproj",
+        "projectPath": "C:\\Users\\Administrador\\paralelo\\controle-estoque-back\\TodoApi\\TodoApi.csproj",
         "packagesPath": "C:\\Users\\Administrador\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Administrador\\paralelo\\backendwebapi\\TodoApi\\obj\\",
+        "outputPath": "C:\\Users\\Administrador\\paralelo\\controle-estoque-back\\TodoApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Administrador\\AppData\\Roaming\\NuGet\\NuGet.Config",
