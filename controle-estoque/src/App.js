@@ -8,10 +8,12 @@ import { Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
 import logo from './assets/comunikime.png';
 
 function App() {
-  
-  const baseUrl="https://localhost:44377/api/TodoItems";
+
+  const baseUrl=" https://localhost:44377/api/TodoItems";
   const [data, setData]=useState([]);
   const [modalCadastrar, setModalCadastrar]=useState(false);
+  const [modalEditar , setModalEditar]=useState(false);
+
 
   const [produtoSelecionado, setProdutoSelecionado]=useState({
     id: '',
@@ -21,8 +23,17 @@ function App() {
     fornecedor:'',
   })
 
+  const selecionarProduto=(todoitem, opcao)=>{
+    setProdutoSelecionado(todoitem);
+    (opcao==="Editar") &&
+    abrirFecharModalEditar();
+  }
+
     const abrirFecharModalCadastrar=()=>{
       setModalCadastrar(!modalCadastrar);
+    }
+    const abrirFecharModalEditar=()=>{
+      setModalEditar(!modalEditar);
     }
 
   const handleChange = e=>{
@@ -47,6 +58,25 @@ function App() {
     .then(response=>{
       setData(data.concat(response.data));
       abrirFecharModalCadastrar();
+    }).catch(error=>{
+      console.log(error);
+    })
+  }
+
+  const pedidoPut=async()=>{
+    await axios.put(baseUrl+"/"+produtoSelecionado.id, produtoSelecionado)
+    .then(response=>{
+      var resposta=response.data;
+      var dadosAuxiliar=data;
+      dadosAuxiliar.map(todoitem=>{
+        if(todoitem.id===produtoSelecionado.id){
+          todoitem.name=resposta.name;
+          todoitem.marca=resposta.marca;
+          todoitem.preco=resposta.preco;
+          todoitem.fornecedor=resposta.fornecedor;
+        }
+      });
+      abrirFecharModalEditar();
     }).catch(error=>{
       console.log(error);
     })
@@ -81,8 +111,8 @@ function App() {
             <td>{todoitem.preco}</td>
             <td>{todoitem.fornecedor}</td>
             <td>
-              <button className="btn btn-primary">Editar</button> {" "}
-              <button className="btn btn-danger">Excluir</button> 
+              <button className="btn btn-primary" onClick={()=>selecionarProduto(todoitem, "Editar")}>Editar</button> {" "}
+              <button className="btn btn-danger" onClick={()=>selecionarProduto(todoitem, "Excluir")}>Excluir</button> 
             </td>
             </tr>
         ))}
@@ -109,6 +139,38 @@ function App() {
     <ModalFooter>
       <button className="btn btn-primary" onClick={()=>pedidoPost()}>Cadastrar</button>{" "}
       <button className="btn btn-danger" onClick={()=>abrirFecharModalCadastrar()}>Cancelar</button>
+    </ModalFooter>
+    </Modal>
+
+
+    <Modal isOpen={modalEditar}>
+      <ModalHeader>Editar Poduto</ModalHeader>
+      <ModalBody>
+        <div className="form-group">
+          <label>ID: </label>
+          <input type="text" className="form-control" readOnly value={produtoSelecionado && produtoSelecionado.id}/>
+          <br />
+          <label>Nome: </label>
+          <br />
+          <input type="text" className="form-control" name="name" onChange={handleChange}
+            value={produtoSelecionado && produtoSelecionado.name} /><br />
+          <label>Marca: </label>
+          <br />
+          <input type="text" className="form-control" name="marca" onChange={handleChange}
+          value={produtoSelecionado && produtoSelecionado.marca}/><br />
+          <label>Preço: </label>
+          <br />
+          <input type="text" className="form-control" name="preco" onChange={handleChange}
+          value={produtoSelecionado && produtoSelecionado.preco} /><br />
+          <label>Fornecedor: </label>
+          <br />
+          <input type="text" className="form-control" name="fornecedor" onChange={handleChange}
+          value={produtoSelecionado && produtoSelecionado.fornecedor} /><br />
+        </div>
+      </ModalBody>
+    <ModalFooter>
+      <button className="btn btn-primary" onClick={()=>pedidoPut()}>Editar</button>{" "}
+      <button className="btn btn-danger" onClick={()=>abrirFecharModalEditar()}>Cancelar</button>
     </ModalFooter>
     </Modal>
     </div>
