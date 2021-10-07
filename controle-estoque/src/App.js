@@ -13,6 +13,7 @@ function App() {
   const [data, setData]=useState([]);
   const [modalCadastrar, setModalCadastrar]=useState(false);
   const [modalEditar , setModalEditar]=useState(false);
+  const [modalExcluir, setModalExcluir]=useState(false);
 
 
   const [produtoSelecionado, setProdutoSelecionado]=useState({
@@ -25,8 +26,8 @@ function App() {
 
   const selecionarProduto=(todoitem, opcao)=>{
     setProdutoSelecionado(todoitem);
-    (opcao==="Editar") &&
-    abrirFecharModalEditar();
+    (opcao==="Editar") ?
+    abrirFecharModalEditar(): abrirFecharModalExcluir();
   }
 
     const abrirFecharModalCadastrar=()=>{
@@ -34,6 +35,9 @@ function App() {
     }
     const abrirFecharModalEditar=()=>{
       setModalEditar(!modalEditar);
+    }
+    const abrirFecharModalExcluir=()=>{
+      setModalExcluir(!modalExcluir);
     }
 
   const handleChange = e=>{
@@ -62,6 +66,17 @@ function App() {
       console.log(error);
     })
   }
+
+  const pedidoDelete=async()=>{
+    await axios.delete(baseUrl+"/"+produtoSelecionado.id)
+    .then(response=>{
+      setData(data.filter(produto=> produto.id !== response.data));
+      abrirFecharModalExcluir();
+    }).catch(error=>{
+      console.log(error);
+    })
+  }
+
 
   const pedidoPut=async()=>{
     await axios.put(baseUrl+"/"+produtoSelecionado.id, produtoSelecionado)
@@ -173,6 +188,20 @@ function App() {
       <button className="btn btn-danger" onClick={()=>abrirFecharModalEditar()}>Cancelar</button>
     </ModalFooter>
     </Modal>
+
+    <Modal isOpen={modalExcluir}>
+
+      <ModalBody>
+        Confirma a exclusão deste produto {produtoSelecionado && produtoSelecionado.name} ?
+      </ModalBody>
+
+      <ModalFooter>
+        <button className="btn btn-danger" onClick={()=>pedidoDelete()}>Sim</button>
+        <button className="btn btn-secondary" onClick={()=>abrirFecharModalExcluir()}>Não</button>
+      </ModalFooter>
+
+    </Modal>
+
     </div>
   );
 }
