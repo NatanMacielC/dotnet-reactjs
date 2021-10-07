@@ -11,9 +11,42 @@ function App() {
   
   const baseUrl="https://localhost:44377/api/TodoItems";
   const [data, setData]=useState([]);
+  const [modalCadastrar, setModalCadastrar]=useState(false);
+
+  const [produtoSelecionado, setProdutoSelecionado]=useState({
+    id: '',
+    name:'',
+    marca:'',
+    preco:'',
+    fornecedor:'',
+  })
+
+    const abrirFecharModalCadastrar=()=>{
+      setModalCadastrar(!modalCadastrar);
+    }
+
+  const handleChange = e=>{
+    const {name,value} = e.target;
+    setProdutoSelecionado({
+      ...produtoSelecionado,[name]:value
+    });
+    console.log(produtoSelecionado);
+  }
+
   const pedidoGet = async()=>{
     await axios.get(baseUrl).then(response => {
       setData(response.data);
+    }).catch(error=>{
+      console.log(error);
+    })
+  }
+
+  const pedidoPost = async()=>{
+    delete produtoSelecionado.id;
+    await axios.post(baseUrl, produtoSelecionado)
+    .then(response=>{
+      setData(data.concat(response.data));
+      abrirFecharModalCadastrar();
     }).catch(error=>{
       console.log(error);
     })
@@ -29,7 +62,7 @@ function App() {
     <h3>Cadastro de Produtos</h3>
     <header>
       <img src={logo} alt="logo"/> 
-      <button className="btn btn-success">Adicionar Produto</button> 
+      <button className="btn btn-success" onClick={()=>abrirFecharModalCadastrar()}>Adicionar Produto</button> 
     </header>
     <table className="table table-bordered" >
       <thead>
@@ -55,6 +88,29 @@ function App() {
         ))}
       </tbody>
     </table>
+    <Modal isOpen={modalCadastrar}>
+      <ModalHeader>Cadastrar Produtos</ModalHeader>
+      <ModalBody>
+        <div className="form-group">
+          <label>Nome: </label>
+          <br />
+          <input type="text" className="form-control" name="name" onChange={handleChange}/>
+          <label>Marca: </label>
+          <br />
+          <input type="text" className="form-control" name="marca" onChange={handleChange}/>
+          <label>Preço: </label>
+          <br />
+          <input type="text" className="form-control" name="preco" onChange={handleChange}/>
+          <label>Fornecedor: </label>
+          <br />
+          <input type="text" className="form-control" name="fornecedor" onChange={handleChange}/>
+        </div>
+      </ModalBody>
+    <ModalFooter>
+      <button className="btn btn-primary" onClick={()=>pedidoPost()}>Cadastrar</button>{" "}
+      <button className="btn btn-danger" onClick={()=>abrirFecharModalCadastrar()}>Cancelar</button>
+    </ModalFooter>
+    </Modal>
     </div>
   );
 }
