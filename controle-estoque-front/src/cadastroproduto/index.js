@@ -1,0 +1,212 @@
+import React, {useState, useEffect} from 'react';
+import axios from 'axios';
+import { FaEdit, FaWindowClose } from "react-icons/fa";
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
+
+import { Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
+import logo from '../assets/comunikime.png'
+
+function App() {
+
+  const baseUrl=" https://localhost:44377/api/TodoItems";
+  const [data, setData]=useState([]);
+  const [modalCadastrar, setModalCadastrar]=useState(false);
+  const [modalEditar , setModalEditar]=useState(false);
+  const [modalExcluir, setModalExcluir]=useState(false);
+
+
+  const [produtoSelecionado, setProdutoSelecionado]=useState({
+    id: '',
+    name:'',
+    marca:'',
+    preco:'',
+    fornecedor:'',
+  })
+
+  const selecionarProduto=(todoitem, opcao)=>{
+    setProdutoSelecionado(todoitem);
+    (opcao==="Editar") ?
+    abrirFecharModalEditar(): abrirFecharModalExcluir();
+  }
+
+    const abrirFecharModalCadastrar=()=>{
+      setModalCadastrar(!modalCadastrar);
+    }
+    const abrirFecharModalEditar=()=>{
+      setModalEditar(!modalEditar);
+    }
+    const abrirFecharModalExcluir=()=>{
+      setModalExcluir(!modalExcluir);
+    }
+
+  const handleChange = e=>{
+    const {name,value} = e.target;
+    setProdutoSelecionado({
+      ...produtoSelecionado,[name]:value
+    });
+    console.log(produtoSelecionado);
+  }
+
+  const pedidoGet = async()=>{
+    await axios.get(baseUrl).then(response => {
+      setData(response.data);
+    }).catch(error=>{
+      console.log(error);
+    })
+  }
+
+  const pedidoPost = async()=>{
+    delete produtoSelecionado.id;
+    await axios.post(baseUrl, produtoSelecionado)
+    .then(response=>{
+      setData(data.concat(response.data));
+      abrirFecharModalCadastrar();
+    }).catch(error=>{
+      console.log(error);
+    })
+  }
+
+  const pedidoDelete=async()=>{
+    await axios.delete(baseUrl+"/"+produtoSelecionado.id)
+    .then(response=>{
+      setData(data.filter(produto=> produto.id !== response.data));
+      abrirFecharModalExcluir();
+    }).catch(error=>{
+      console.log(error);
+    })
+  }
+
+
+  const pedidoPut=async()=>{
+    await axios.put(baseUrl+"/"+produtoSelecionado.id, produtoSelecionado)
+    .then(response=>{
+      var resposta=response.data;
+      var dadosAuxiliar=data;
+      dadosAuxiliar.map(todoitem=>{
+        if(todoitem.id===produtoSelecionado.id){
+          todoitem.name=resposta.name;
+          todoitem.marca=resposta.marca;
+          todoitem.preco=resposta.preco;
+          todoitem.fornecedor=resposta.fornecedor;
+        }
+      });
+      abrirFecharModalEditar();
+    }).catch(error=>{
+      console.log(error);
+    })
+  }
+
+  useEffect(()=>{
+    pedidoGet();
+  })
+
+  return (
+    <div className="App"> 
+    <header>
+      <img src={logo} alt="logo"/> 
+      <button class="headerbutton">Home</button>
+      <button class="headerbutton">Contato</button>
+      <button class="headerbutton">Estoque</button>
+      <button class="headerbutton">Loja</button>
+    </header>
+    <table className="table table-bordered" >
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Marca</th>
+          <th>Preço</th>
+          <th>Fornecedor</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map(todoitem=>(
+          <tr key={todoitem.id}>
+            <td>{todoitem.name}</td>
+            <td>{todoitem.marca}</td>
+            <td>{todoitem.preco}</td>
+            <td>{todoitem.fornecedor}</td>
+            <td>
+              <button className="btn btn-primary" onClick={()=>selecionarProduto(todoitem, "Editar")}><FaEdit /></button> {" "}
+              <button className="btn btn-danger" onClick={()=>selecionarProduto(todoitem, "Excluir")}><FaWindowClose /></button>
+            </td>
+            </tr>
+        ))}
+      </tbody>
+    </table>
+    <Modal isOpen={modalCadastrar}>
+      <ModalHeader>Cadastrar Produtos</ModalHeader>
+      <ModalBody>
+        <div className="form-group">
+          <label>Nome: </label>
+          <br />
+          <input type="text" className="form-control" name="name" onChange={handleChange}/>
+          <label>Marca: </label>
+          <br />
+          <input type="text" className="form-control" name="marca" onChange={handleChange}/>
+          <label>Preço: </label>
+          <br />
+          <input type="text" className="form-control" name="preco" onChange={handleChange}/>
+          <label>Fornecedor: </label>
+          <br />
+          <input type="text" className="form-control" name="fornecedor" onChange={handleChange}/>
+        </div>
+      </ModalBody>
+    <ModalFooter>
+      <button className="btn btn-primary" onClick={()=>pedidoPost()}>Cadastrar</button>{" "}
+      <button className="btn btn-danger" onClick={()=>abrirFecharModalCadastrar()}>Cancelar</button>
+    </ModalFooter>
+    </Modal>
+
+
+    <Modal isOpen={modalEditar}>
+      <ModalHeader>Editar Poduto</ModalHeader>
+      <ModalBody>
+        <div className="form-group">
+          <label>ID: </label>
+          <input type="text" className="form-control" readOnly value={produtoSelecionado && produtoSelecionado.id}/>
+          <br />
+          <label>Nome: </label>
+          <br />
+          <input type="text" className="form-control" name="name" onChange={handleChange}
+            value={produtoSelecionado && produtoSelecionado.name} /><br />
+          <label>Marca: </label>
+          <br />
+          <input type="text" className="form-control" name="marca" onChange={handleChange}
+          value={produtoSelecionado && produtoSelecionado.marca}/><br />
+          <label>Preço: </label>
+          <br />
+          <input type="text" className="form-control" name="preco" onChange={handleChange}
+          value={produtoSelecionado && produtoSelecionado.preco} /><br />
+          <label>Fornecedor: </label>
+          <br />
+          <input type="text" className="form-control" name="fornecedor" onChange={handleChange}
+          value={produtoSelecionado && produtoSelecionado.fornecedor} /><br />
+        </div>
+      </ModalBody>
+    <ModalFooter>
+      <button className="btn btn-primary" onClick={()=>pedidoPut()}>Editar</button>{" "}
+      <button className="btn btn-danger" onClick={()=>abrirFecharModalEditar()}>Cancelar</button>
+    </ModalFooter>
+    </Modal>
+
+    <Modal isOpen={modalExcluir}>
+
+      <ModalBody>
+        Confirma a exclusão deste produto {produtoSelecionado && produtoSelecionado.name} ?
+      </ModalBody>
+
+      <ModalFooter>
+        <button className="btn btn-danger" onClick={()=>pedidoDelete()}>Sim</button>
+        <button className="btn btn-secondary" onClick={()=>abrirFecharModalExcluir()}>Não</button>
+      </ModalFooter>
+
+    </Modal>
+    <button className="btn btn-success" onClick={()=>abrirFecharModalCadastrar()}>Adicionar Produto</button> 
+    </div>
+  );
+}
+
+export default App;
